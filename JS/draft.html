@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slideshow Presentation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide p {
+      margin: 0;
+      padding: 10px 0;
+    }
+
+    .navigation {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .navigation button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+    }
+
+    .homepage-buttons {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .homepage-buttons button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+    }
+
+    .back-button {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-button button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    .map-container {
+      width: 100%;
+      height: 40%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .line-chart-container {
+      width: 100%;
+      height: 50%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .legend {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .map-slider-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+      margin-bottom: 20px;
+      position: absolute;
+      left: 20px;
+      top: 150px;
+
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+      margin-bottom: 20px;
+      position: absolute;
+      left: 5px;
+      top: 180px;
+
+    }
+
+    .slider-container label {
+      margin-bottom: 5px;
+    }
+
+    .slider-container input {
+      width: 200px;
+      margin-bottom: 10px;
+    }
+
+    .slider-value {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-container p {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-container label {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-container {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 10px;
+    }
+
+    .chart-and-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      height: 60vh;
+    }
+
+    .controls-container {
+      display: flex;
+      flex-direction: column;
+      margin-right: 20px;
+      padding: 10px;
+      border-right: 1px solid #ccc;
+    }
+
+    .chart-container {
+      flex-grow: 1;
+      width: 100%;
+      height: 60vh;
+    }
+
+    .bubble-chart {
+      width: 100%;
+      height: 500px;
+    }
+
+    .analysis-container {
+      display: flex;
+      height: 100%;
+    }
+
+    .chart-area {
+      width: 75%;
+      padding-right: 20px;
+    }
+
+    .analysis-area {
+      width: 25%;
+      border-left: 1px solid #ccc;
+      padding-left: 20px;
+      overflow-y: auto;
+    }
+
+    .tooltip {
+      position: absolute;
+      text-align: center;
+      width: auto;
+      height: auto;
+      padding: 10px;
+      font: 12px sans-serif;
+      background: lightsteelblue;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      pointer-events: none;
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide active" id="slide1">
+    <h1>Multifactorial Influences Including Temperature on
+      Influenza Dynamics in Australia</h1>
+    <p>Influenza is a serious seasonal illness that affects millions of lives every year, including in Australia.<br>
+      Changes in temperature appear to be closely related to the outbreaks of influenza. To explore this
+      relationship,<br>
+      this page filters and organizes a large amount of data to visually display the connections between various<br>
+      factors, including temperature changes in different regions of Australia, and influenza trends.<br><br>
+
+      This page will present three different visualizations:<br><br>
+
+      1.Snapshot of Average Temperatures by State in Australia: Displays the changes in average temperatures across
+      Australian states from 2008 to 2022.<br>
+      2.Age and Virus Type Distribution of Influenza Cases: Shows the distribution of influenza cases by age and virus
+      type.<br>
+      3.Temperature-Influenced Influenza Case Distribution: Illustrates the relationship between temperature changes and
+      influenza cases.<br><br>
+      Data sources and references are provided at the end page to support the presented analysis results.</p>
+    <div class="homepage-buttons"><br><br>
+      <button onclick="goToSlide(2)">Snapshot of average temperatures by state in Australia</button><br>
+      <button onclick="goToSlide(3)">Age and Virus Type Distribution of Influenza Cases</button><br>
+      <button onclick="goToSlide(4)">Temperature-Influenced Influenza Case Distribution</button><br>
+      <button onclick="goToSlide(5)">Data Source and Reference</button>
+
+    </div>
+    <h2>FIT5147 Assignment DVP<br>
+      Student Name: Fangyu Sun<br>
+      Student ID:32858736</h2>
+  </div>
+
+  <div class="slide" id="slide2">
+    <h2>Snapshot of average temperatures by state in Australia (2008-2022)</h2>
+    <div class="analysis-container">
+      <div class="chart-area">
+        <p>Use the slider to select a specific year and the date slider to choose a specific date within that year.<br>
+          The map shows the average temperature for each state, and the line chart below shows the temperature trends
+          over<br>
+          the months of the selected year. Hover over the lines for detailed information.</p>
+        <div class="map-container" id="map"></div>
+        <div class="map-slider-container">
+          <label for="yearSlider2">Select Year (2008-2022):</label>
+          <input type="range" id="yearSlider2" min="2008" max="2022" value="2022" step="1">
+          <div class="slider-value" id="yearValue2">2022</div>
+          <label for="dateSlider">Select Date (Jan-1 to Dec-31):</label>
+          <input type="range" id="dateSlider" min="0" max="365" value="0" step="1">
+          <div class="slider-value" id="dateValue">Jan-1</div>
+        </div>
+        <div class="line-chart-container" id="line-chart"></div>
+      </div>
+      <div class="analysis-area">
+        <h3>Analysis</h3>
+        <p>Australia's climate has significant geographical variations. This map allows us to visualise the average
+          temperature of different states at different points in time. The colour of the map indicates the temperature,
+          with darker colours indicating higher temperatures. The Northern Territory and Queensland are usually shown in
+          dark orange or red, indicating that these areas are warmer in most years and points in time, which relates to
+          their proximity to the equator and tropical climate. In contrast, Tasmania and Victoria are usually shown as
+          light yellow or green or even blue, indicating cooler temperatures in these areas, which is related to their
+          proximity to Antarctica and temperate climate. By adjusting the year and date sliders, we can observe seasonal
+          changes. For example, during the summer months (January) the overall temperature is higher, while during the
+          winter months (July) the temperature is significantly lower.</p>
+        <p>The line graphs show the trend of monthly average temperature for each state during the selected years. The
+          graphs show how temperatures vary from year to year with the seasons. Typically, temperatures are higher in
+          the summer (December to February) and lower in the winter (June to August). The different coloured lines allow
+          us to compare the differences in temperature between states. For example, although New South Wales and
+          Victoria are neighbouring states, there are still some differences in temperature trends.</p>
+      </div>
+      <div class="back-button">
+        <button onclick="goToSlide(1)">Back to Title</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide3">
+    <h2>Age and Virus Type Distribution of Influenza Cases (2008-2022)</h2>
+    <div class="analysis-container">
+      <div class="chart-area">
+        <p>Use the slider to select the year and month, checkboxes to select the states, <br>
+          and hover over the bars to see detailed information.</p>
+        <div class="chart-and-controls">
+          <div class="controls-container">
+            <div class="slider-container">
+              <label for="yearSlider1">Select Year (2008-2022):</label>
+              <input type="range" id="yearSlider1" min="2008" max="2022" value="2022" step="1">
+              <div class="slider-value" id="yearValue1">2022</div>
+            </div>
+            <div class="slider-container" style="margin-top: 100px;">
+              <label for="monthSlider">Select Month:</label>
+              <input type="range" id="monthSlider" min="1" max="12" value="1" step="1" style="margin-left: 2px;">
+              <div style="display: flex; align-items: center; margin-top: 10px;">
+                <input type="checkbox" id="fullYearCheckbox" style="margin-left: -85px;">
+                <label for="fullYearCheckbox" style="margin-left: 5px;">Full Year</label>
+              </div>
+              <div class="slider-value" id="monthValue">January</div>
+            </div>
+            <div class="checkbox-container" style="margin-top: 400px;">
+              <p>Select State:</p>
+              <label><input type="checkbox" class="state-checkbox" value="ALL" checked> All States</label>
+              <label><input type="checkbox" class="state-checkbox" value="NSW"> NSW</label>
+              <label><input type="checkbox" class="state-checkbox" value="VIC"> VIC</label>
+              <label><input type="checkbox" class="state-checkbox" value="QLD"> QLD</label>
+              <label><input type="checkbox" class="state-checkbox" value="SA"> SA</label>
+              <label><input type="checkbox" class="state-checkbox" value="WA"> WA</label>
+              <label><input type="checkbox" class="state-checkbox" value="TAS"> TAS</label>
+              <label><input type="checkbox" class="state-checkbox" value="NT"> NT</label>
+              <label><input type="checkbox" class="state-checkbox" value="ACT"> ACT</label>
+            </div>
+          </div>
+          <div class="chart-container" id="stacked-bar-chart"></div>
+        </div>
+      </div>
+      <div class="analysis-area">
+        <h3>Analysis</h3>
+        <p>Stacked bar chart shows the distribution of influenza cases across different age groups over the years, as
+          well as the proportion of different virus types within these age groups. By observing the chart, it can be
+          seen that the number of influenza cases in the age groups 0-4 years and 5-9 years is the highest in all years,
+          which may be related to the fact that the immune systems of children in these age groups are not fully
+          developed. Relatively, the number of influenza cases in the elderly population aged 80 and above is also
+          higher, which may be because the immune system of the elderly is weaker and more susceptible to influenza
+          virus infection. The distribution of different virus types also shows significant differences. </p>
+        <p>For example, A(unsubtyped) virus accounts for a large proportion of influenza cases in all age groups and
+          years, indicating
+          its widespread transmission. A(H3N2) and B viruses also account for a considerable proportion of influenza
+          cases in certain years and age groups. In addition, by comparing different years, it can be seen that the
+          number of influenza cases in certain years (such as 2015 and 2017) is significantly higher than in other
+          years, which may be related to the influenza pandemic in those years.</p>
+      </div>
+      <div class="back-button">
+        <button onclick="goToSlide(1)">Back to Title</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide4">
+    <h2>Temperature-Influenced Influenza Case Distribution (2008-2022)</h2>
+    <div class="analysis-container">
+      <div class="chart-area">
+        <p> Use the slider to select the year, checkboxes to select the states, <br>
+          and hover over the bubbles to see influenza case number and other detailed information.</p>
+        <div class="chart-and-controls">
+          <div class="controls-container">
+            <div class="slider-container">
+              <label for="yearSlider3">Select Year:</label>
+              <input type="range" id="yearSlider3" min="2008" max="2022" value="2022" step="1">
+              <div class="slider-value" id="yearValue3">2022</div>
+            </div>
+            <div class="checkbox-container" style="margin-top: 200px;">
+              <p>Select State:</p>
+              <label><input type="checkbox" class="state-checkbox" value="ALL" checked> All States</label>
+              <label><input type="checkbox" class="state-checkbox" value="NSW"> NSW</label>
+              <label><input type="checkbox" class="state-checkbox" value="VIC"> VIC</label>
+              <label><input type="checkbox" class="state-checkbox" value="QLD"> QLD</label>
+              <label><input type="checkbox" class="state-checkbox" value="SA"> SA</label>
+              <label><input type="checkbox" class="state-checkbox" value="WA"> WA</label>
+              <label><input type="checkbox" class="state-checkbox" value="TAS"> TAS</label>
+              <label><input type="checkbox" class="state-checkbox" value="NT"> NT</label>
+              <label><input type="checkbox" class="state-checkbox" value="ACT"> ACT</label>
+            </div>
+          </div>
+          <div class="chart-container" id="bubble-chart"></div>
+          <div class="tooltip" id="bubbleChartTooltip"></div>
+        </div>
+      </div>
+      <div class="analysis-area">
+        <h3>Analysis</h3>
+        <p>The bubble chart shows the number of influenza cases under different temperatures and dates. The size of the
+          bubbles represents the number of influenza cases, with larger bubbles indicating a higher number of cases. By
+          observing the chart, it can be seen that the number of influenza cases is highest when the temperature is
+          between 15 and 25 degrees Celsius in all years, which may be related to the more active transmission of the
+          virus within this temperature range. Additionally, in winter (June to August) of each year, due to lower
+          temperatures, the number of influenza cases increases significantly, indicating that winter is a
+          high-incidence season for influenza. In certain years, such as 2015 and 2017, the number of influenza cases is
+          significantly higher than in other years, possibly due to influenza pandemics in those years.</p>
+      </div>
+      <div class="back-button">
+        <button onclick="goToSlide(1)">Back to Title</button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="slide" id="slide5">
+    <h2>Data Source and Reference</h2><br><br><br>
+    <p>ACORN-SAT. (2018). ACORN-SAT Australia v2 (ongoing): Australian Climate Observations
+      Reference Network - Surface Air Temperature (1910 onwards) | Bureau Data Catalogue.
+      <a href="http://www.bom.gov.au/metadata/catalogue/19115/ANZCW0503900725" target="_blank">Bom.gov.au</a>;
+      corporateName=Bureau of Meteorology.
+    </p>
+    <p>ACORN-SAT. (2022). ACORN-SAT Station Catalogue.
+      <a href="http://www.bom.gov.au/climate/data/acorn-sat/stations/#/23000" target="_blank">Bom.gov.au</a>.
+    </p>
+    <p>Australian Bureau of Statistics. (2024). National, state and territory population, September 2023 |
+      <a href="https://www.abs.gov.au/statistics/people/population/national-state-and-territorypopulation/sep-2023"
+        target="_blank">Australian Bureau of Statistics</a>.
+    </p>
+    <p>Health. (2021). National Notifiable Diseases Surveillance System (NNDSS) public dataset – influenza
+      (laboratory confirmed). Australian Government Department of Health and Aged Care.
+      <a href="https://www.health.gov.au/resources/publications/national-notifiable-diseases-surveillance-system-nndss-public-dataset-influenza-laboratory-confirmed"
+        target="_blank">health.gov.au</a>.
+    </p>
+    <p>
+      Hogan, R. Australian States GeoJSON. Retrieved from
+      <a href="https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.geojson" target="_blank">
+        https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.geojson
+      </a>.
+    </p>
+
+    <div class="back-button">
+      <button onclick="goToSlide(1)">Back to Title</button>
+    </div>
+  </div>
+
+
+  </div>
+  <div class="navigation">
+    <button onclick="prevSlide()">Previous</button>
+    <button onclick="nextSlide()">Next</button>
+  </div>
+
+  <div class="tooltip" id="lineChartTooltip"></div>
+  <div class="tooltip" id="stackedBarChartTooltip"></div>
+  <div class="tooltip" id="bubbleChartTooltip"></div>
+
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script>
+    const colorScale = d3.scaleSequential([0, 40], d3.interpolateTurbo);
+    const colorLegendSvg = d3.select("#color-legend");
+
+    let currentSlide = 1;
+    const totalSlides = 5;
+    const states = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"];
+    const stateNameMapping = {
+      "New South Wales": "NSW",
+      "Victoria": "VIC",
+      "Queensland": "QLD",
+      "South Australia": "SA",
+      "Western Australia": "WA",
+      "Tasmania": "TAS",
+      "Northern Territory": "NT",
+      "Australian Capital Territory": "ACT"
+    };
+    let virusTypes = [];
+    const lineColors = d3.scaleOrdinal(d3.schemeCategory10);
+    const barColors = d3.scaleOrdinal(d3.schemeCategory10);
+
+    function showSlide(n) {
+      document.querySelectorAll('.slide').forEach(slide => {
+        slide.classList.remove('active');
+      });
+      document.getElementById(`slide${n}`).classList.add('active');
+      if (n === 2) {
+        loadCSVDataAndDrawVisualizations();
+        setupSliders();
+      }
+      if (n === 3) {
+        document.getElementById('yearSlider1').value = 2022;
+        document.getElementById('yearValue1').textContent = 2022;
+        document.getElementById('fullYearCheckbox').checked = true;
+        document.getElementById('monthSlider').disabled = true;
+        document.getElementById('monthValue').style.color = 'gray';
+        updateStackedBarChart();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function goToSlide(n) {
+      currentSlide = n;
+      showSlide(n);
+    }
+
+    // Function to load temp CSV data and draw visualizations
+    function loadCSVDataAndDrawVisualizations() {
+      d3.csv("combined_all_states.csv").then(function (data) {
+        const parsedData = parseData(data);
+        updateVisualizations(parsedData);
+      }).catch(function (error) {
+        //console.error("Error loading CSV data: ", error);
+      });
+    }
+
+    // Function to parse CSV data
+    function parseData(data) {
+      return data.map(d => {
+        const [day, month, year] = d.date.split('/');
+        const parsedDate = new Date(year, month - 1, day);
+        return {
+          state: d.State,
+          date: parsedDate,
+          temperature: +d['mean temperature (degC)']
+        };
+      });
+    }
+
+    // Function to update visualizations
+    function updateVisualizations(data) {
+      drawMap(data);
+      const year = document.getElementById('yearSlider2').value;
+      drawLineChart(data, +year);  // Update line chart with selected year
+    }
+
+    // Function to draw the map on slide 2
+    function drawMap(data) {
+      const width = document.getElementById('map').clientWidth;
+      const height = document.getElementById('map').clientHeight;
+
+      d3.select("#map").selectAll("svg").remove();
+      const svg = d3.select("#map").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const projection = d3.geoMercator()
+        .center([133.7751, -25.2744])
+        .scale(width / 2.5)
+        .translate([width / 2, height / 2]);
+
+      const path = d3.geoPath().projection(projection);
+      const color = d3.scaleSequential([0, 40], d3.interpolateTurbo);
+
+      // Create tooltip
+      const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip");
+
+      d3.json("states.geojson").then(function (mapData) {
+        // Select elements and check
+        const paths = svg.selectAll("path")
+          .data(mapData.features)
+          .enter().append("path")
+          .attr("d", path)
+          .attr("fill", "#ccc")
+          .attr("stroke", "#000");
+
+        paths.attr("fill", function (d) {
+          const year = d3.select("#yearSlider2").property("value");
+          const dateSliderValue = d3.select("#dateSlider").property("value");
+          const selectedDate = new Date(year, 0, 1);
+          selectedDate.setDate(selectedDate.getDate() + parseInt(dateSliderValue));
+
+          const day = selectedDate.getDate();
+          const month = selectedDate.getMonth() + 1;
+          const formattedDate = `${day}/${month}/${year}`;
+          const stateAbbreviation = stateNameMapping[d.properties.STATE_NAME];
+          const stateData = data.find(item => item.state === stateAbbreviation && item.date.getTime() === selectedDate.getTime());
+          if (stateData) {
+            const colorValue = color(stateData.temperature);
+            return colorValue;
+          } else {
+            return "#ccc";
+          }
+        })
+          .on("mouseover", function (event, d) {
+            const stateName = d.properties.STATE_NAME;
+            const year = d3.select("#yearSlider2").property("value");
+            const dateSliderValue = d3.select("#dateSlider").property("value");
+            const selectedDate = new Date(year, 0, 1);
+            selectedDate.setDate(selectedDate.getDate() + parseInt(dateSliderValue));
+            const dateFormatted = d3.timeFormat("%B %d, %Y")(selectedDate);
+            const stateAbbreviation = stateNameMapping[stateName];
+            const stateData = data.find(item => item.state === stateAbbreviation && item.date.getTime() === selectedDate.getTime());
+            const temperature = stateData ? stateData.temperature : "N/A";
+            tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
+            tooltip.html(`State: ${stateName}<br>Date: ${dateFormatted}<br>Temperature: ${temperature !== "N/A" ? temperature.toFixed(2) : temperature}°C`)
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mousemove", function (event) {
+            tooltip.style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function () {
+            tooltip.transition()
+              .duration(500)
+              .style("opacity", 0);
+          });
+
+        // Add legend
+        const legendWidth = 400;
+        const legendHeight = 20;
+        const legendSvg = svg.append("g")
+          .attr("class", "legend")
+          .attr("transform", `translate(${width - legendWidth - 40}, 40)`);
+        legendSvg.append("text")
+          .attr("x", legendWidth / 2)
+          .attr("y", -10)
+          .attr("text-anchor", "middle")
+          .style("font-size", "14px")
+          .style("font-weight", "bold")
+          .text("Average Temperature (°C)");
+        const legend = legendSvg.append("defs")
+          .append("svg:linearGradient")
+          .attr("id", "gradient")
+          .attr("x1", "0%")
+          .attr("y1", "0%")
+          .attr("x2", "100%")
+          .attr("y2", "0%")
+          .attr("spreadMethod", "pad");
+
+        legend.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", d3.interpolateTurbo(0))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "25%")
+          .attr("stop-color", d3.interpolateTurbo(0.25))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", d3.interpolateTurbo(0.5))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "75%")
+          .attr("stop-color", d3.interpolateTurbo(0.75))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", d3.interpolateTurbo(1))
+          .attr("stop-opacity", 1);
+
+        legendSvg.append("rect")
+          .attr("width", legendWidth)
+          .attr("height", legendHeight)
+          .style("fill", "url(#gradient)")
+          .attr("stroke", "#000");
+
+        const xScale = d3.scaleLinear()
+          .domain([0, 40])
+          .range([0, legendWidth]);
+
+        const xAxis = d3.axisBottom(xScale)
+          .ticks(5);
+
+        legendSvg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", `translate(0, ${legendHeight})`)
+          .call(xAxis);
+      }).catch(function (error) {
+        //console.error(error);
+      });
+    }
+
+    function drawLineChart(data, year) {
+      const container = document.getElementById('line-chart');
+      container.innerHTML = '';  // Clear existing chart
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      const svg = d3.select("#line-chart").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const margin = { top: 20, right: 300, bottom: 150, left: 50 },
+        chartWidth = width - margin.left - margin.right,
+        chartHeight = height - margin.top - margin.bottom;
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const x = d3.scaleTime()
+        .domain([new Date(year, 0, 1), new Date(year, 11, 31)])
+        .range([0, chartWidth]);
+
+      const y = d3.scaleLinear()
+        .domain([0, 40])
+        .range([chartHeight, 0]);
+
+      const line = d3.line()
+        .x(d => x(d.week))
+        .y(d => y(d.temperature));
+
+
+
+      // Filter data for the selected year
+      const filteredData = data.filter(d => d.date.getFullYear() === year);
+
+      // Calculate weekly average temperatures
+      const weeklyData = d3.groups(filteredData, d => d.state).map(([state, values]) => {
+        const weeks = d3.timeWeeks(new Date(year, 0, 1), new Date(year, 11, 31));
+        const weeklyAverages = weeks.map(weekStart => {
+          const weekEnd = d3.timeDay.offset(weekStart, 6);
+          const weekValues = values.filter(d => d.date >= weekStart && d.date <= weekEnd);
+          const avgTemp = d3.mean(weekValues, d => d.temperature);
+          return { week: weekStart, temperature: avgTemp, state };
+        }).filter(d => !isNaN(d.temperature)); // Remove weeks without data
+        return { state, values: weeklyAverages };
+      });
+
+      // Create tooltip
+      const tooltip = d3.select("#lineChartTooltip");
+
+      // Draw lines for each state
+      const stateLines = chart.selectAll(".state-line")
+        .data(weeklyData)
+        .enter().append("g")
+        .attr("class", "state-line");
+
+      stateLines.append("path")
+        .attr("class", "line")
+        .attr("d", d => line(d.values))
+        .attr("fill", "none")
+        .attr("stroke", d => lineColors(d.state))
+        .attr("stroke-width", 2);
+
+      stateLines.append("text")
+        .datum(d => ({
+          state: d.state,
+          value: d.values[d.values.length - 1]
+        }))
+        .attr("transform", d => `translate(${x(d.value.week)},${y(d.value.temperature)})`)
+        .attr("x", 5)
+        .attr("dy", ".35em")
+        .style("font", "10px sans-serif")
+        .text(d => d.state);
+
+      // Add circles to data points for hover events
+      const circles = stateLines.selectAll("circle")
+        .data(d => d.values)
+        .enter().append("circle")
+        .attr("cx", d => x(d.week))
+        .attr("cy", d => y(d.temperature))
+        .attr("r", 4)
+        .attr("fill", d => lineColors(d.state))
+        .on("mouseover", function (event, d) {
+          svg.selectAll(".line")
+            .style("opacity", 0.1);
+          svg.selectAll("circle")
+            .style("opacity", 0);
+          d3.select(this)
+            .style("opacity", 1);
+          svg.selectAll(".line")
+            .filter(line => line.state === d.state)
+            .style("opacity", 1)
+            .attr("stroke-width", 4);
+          tooltip.transition().duration(200).style("opacity", .9);
+          tooltip.html(`State: ${d.state}<br>Date: ${d3.timeFormat("%B %d, %Y")(d.week)}<br>Temperature: ${d.temperature.toFixed(2)}°C`)
+            .style("left", (event.pageX + 5) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function () {
+          tooltip.transition().duration(500).style("opacity", 0);
+          svg.selectAll(".line")
+            .style("opacity", 1)
+            .attr("stroke-width", 2);
+          svg.selectAll("circle")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          tooltip.style("left", (event.pageX + 5) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        });
+
+      // Draw x and y axis
+      chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(x).ticks(d3.timeMonth).tickFormat(d3.timeFormat("%b")));
+
+      chart.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+      // Draw legend
+      const legend = svg.selectAll(".legend")
+        .data(states)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => `translate(${chartWidth + 100},${i * 20})`)
+        .on("mouseover", function (event, d) {
+          highlightLine(d);
+        })
+        .on("mouseout", function () {
+          resetLines();
+        });
+
+      legend.append("rect")
+        .attr("x", 0)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", lineColors);
+
+      legend.append("text")
+        .attr("x", 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text(d => d);
+
+      // Highlight a specific line
+      function highlightLine(state) {
+        svg.selectAll(".line")
+          .style("opacity", 0.1);
+        svg.selectAll(".line")
+          .filter(d => d.state === state)
+          .style("opacity", 1)
+          .attr("stroke-width", 4);
+        svg.selectAll("circle")
+          .style("opacity", 0);  // Hide all data points
+      }
+
+      // Reset lines to normal
+      function resetLines() {
+        svg.selectAll(".line")
+          .style("opacity", 1)
+          .attr("stroke-width", 2);
+        svg.selectAll("circle")
+          .style("opacity", 1);
+      }
+    }
+
+
+    // Function to set up sliders
+    function setupSliders() {
+      const yearSlider1 = document.getElementById('yearSlider1');
+      const yearValue1 = document.getElementById('yearValue1');
+      const yearSlider2 = document.getElementById('yearSlider2');
+      const yearValue2 = document.getElementById('yearValue2');
+      const dateSlider = document.getElementById('dateSlider');
+      const dateValue = document.getElementById('dateValue');
+      const monthSlider = document.getElementById('monthSlider');
+      const monthValue = document.getElementById('monthValue');
+      const fullYearCheckbox = document.getElementById('fullYearCheckbox');
+
+      function updateYearSlider(value) {
+        yearSlider1.value = value;
+        yearSlider2.value = value;
+        yearValue1.textContent = value;
+        yearValue2.textContent = value;
+        updateStackedBarChart();
+        loadCSVDataAndDrawVisualizations();
+      }
+
+      yearSlider1.addEventListener('input', function () {
+        updateYearSlider(yearSlider1.value);
+      });
+
+      yearSlider2.addEventListener('input', function () {
+        updateYearSlider(yearSlider2.value);
+      });
+
+      dateSlider.addEventListener('input', function () {
+        const year = yearSlider2.value;
+        const date = new Date(year, 0, 1);
+        date.setDate(date.getDate() + parseInt(dateSlider.value));
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const formattedDate = `${day}/${month}/${year}`;
+        dateValue.textContent = formattedDate;
+        loadCSVDataAndDrawVisualizations();
+      });
+
+      monthSlider.addEventListener('input', function () {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        monthValue.textContent = monthNames[monthSlider.value - 1];
+        updateStackedBarChart();
+      });
+
+      fullYearCheckbox.addEventListener('change', function () {
+        const isFullYear = fullYearCheckbox.checked;
+        monthSlider.disabled = isFullYear;
+        monthValue.style.color = isFullYear ? 'gray' : 'black';
+        updateStackedBarChart();
+      });
+    }
+
+    function loadAndProcessData(callback) {
+      d3.csv("combined_flu_data.csv").then(function (data) {
+        const processedData = data.map(d => {
+          const [day, month, year] = d.Date.split('/');
+          const parsedDate = new Date(year, month - 1, day);
+          return {
+            date: parsedDate,
+            state: d.State,
+            ageGroup: d['Age group'],
+            sex: d.Sex,
+            type: d['Type/Subtype'],
+            cases: +d['cases']
+          };
+        });
+
+        virusTypes = Array.from(new Set(processedData.map(d => d.type)));
+        barColors.domain(virusTypes);
+        callback(processedData, virusTypes);
+      }).catch(function (error) {
+        // console.error("Error loading CSV data: ", error);
+      });
+    }
+
+    function updateStackedBarChart() {
+      const year = document.getElementById('yearSlider1').value;
+      const fullYear = document.getElementById('fullYearCheckbox').checked;
+      const selectedStates = Array.from(document.querySelectorAll('.state-checkbox:checked')).map(cb => cb.value);
+
+      loadAndProcessData(function (data) {
+        let filteredData;
+        if (fullYear) {
+          filteredData = data.filter(d => {
+            return d.date.getFullYear() == year;
+          });
+        } else {
+          const month = document.getElementById('monthSlider').value;
+          filteredData = data.filter(d => {
+            return d.date.getFullYear() == year && (d.date.getMonth() + 1) == month;
+          });
+        }
+
+        if (selectedStates.length > 0 && !selectedStates.includes('ALL')) {
+          filteredData = filteredData.filter(d => selectedStates.includes(d.state));
+        }
+
+        drawStackedBarChart(filteredData, virusTypes);
+      });
+    }
+
+    // Function to draw the stacked bar chart on slide 3
+    function drawStackedBarChart(data, virusTypes) {
+      const container = document.getElementById('stacked-bar-chart');
+      container.innerHTML = '';
+      const width = container.clientWidth;
+      const height = container.clientHeight * 0.8;
+      const svg = d3.select("#stacked-bar-chart").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const margin = { top: 20, right: 200, bottom: 40, left: 40 },
+        chartWidth = width - margin.left - margin.right,
+        chartHeight = height - margin.top - margin.bottom;
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const ageGroups = [
+        "00~04", "05~09", "10~14", "15~19", "20~24", "25~29", "30~34", "35~39",
+        "40~44", "45~49", "50~54", "55~59", "60~64", "65~69", "70~74", "75~79",
+        "80~84", "85+", "Unknown"
+      ];
+      const nestedData = d3.groups(data, d => d.ageGroup).map(([key, values]) => {
+        const countByType = d3.rollups(values, v => v.length, d => d.type);
+        const result = { ageGroup: key, state: values[0].state, date: values[0].date };
+        countByType.forEach(([type, count]) => {
+          result[type] = count;
+        });
+        return result;
+      }).filter(d => ageGroups.includes(d.ageGroup));
+      nestedData.sort((a, b) => ageGroups.indexOf(a.ageGroup) - ageGroups.indexOf(b.ageGroup));
+      const stack = d3.stack()
+        .keys(virusTypes);
+
+      const layers = stack(nestedData);
+      const x = d3.scaleBand()
+        .domain(ageGroups)
+        .range([0, chartWidth])
+        .padding(0.1);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(layers, layer => d3.max(layer, d => d[1]))])
+        .range([chartHeight, 0]);
+
+      const layerGroups = chart.selectAll(".layer")
+        .data(layers)
+        .enter().append("g")
+        .attr("class", "layer")
+        .attr("fill", d => barColors(d.key));
+
+      const bars = layerGroups.selectAll("rect")
+        .data(d => d)
+        .enter().append("rect")
+        .attr("x", d => x(d.data.ageGroup))
+        .attr("y", d => isNaN(y(d[1])) ? 0 : y(d[1]))
+        .attr("height", d => {
+          const height = y(d[0]) - y(d[1]);
+          return isNaN(height) ? 0 : Math.max(0, height);
+        })
+        .attr("width", x.bandwidth())
+        .on("mouseover", function (event, d) {
+          d3.selectAll(".layer rect").style("opacity", 0.3);
+          d3.select(this)
+            .style("opacity", 1)
+            .style("stroke", "black")
+            .style("stroke-width", "2px");
+
+          const virusType = d3.select(this.parentNode).datum().key;
+
+          const tooltip = d3.select("#stackedBarChartTooltip")
+            .style("opacity", 1)
+            .html(`State: ${d.data.state}<br>Period: ${d.data.date.getFullYear()}-${d.data.date.getMonth() + 1}<br>Virus Type: ${virusType}<br>Cases Number: ${d[1] - d[0]}`)
+            .style("left", `${event.pageX + 5}px`)
+            .style("top", `${event.pageY - 28}px`);
+        })
+        .on("mouseout", function (d) {
+          d3.selectAll(".layer rect").style("opacity", 1);
+          d3.select(this)
+            .style("stroke", "none");
+
+          d3.select("#stackedBarChartTooltip")
+            .style("opacity", 0);
+        });
+
+      nestedData.forEach(d => {
+        const totalCases = d3.sum(virusTypes.map(type => d[type] || 0));
+        chart.append("text")
+          .attr("x", x(d.ageGroup) + x.bandwidth() / 2)
+          .attr("y", y(totalCases) - 5)
+          .attr("text-anchor", "middle")
+          .attr("font-size", "14px")
+          .attr("fill", "black")
+          .text(totalCases);
+      });
+      chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("font-size", "14px");
+
+      chart.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+      const legend = chart.selectAll(".legend")
+        .data(virusTypes)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => `translate(${chartWidth + 20},${i * 20})`);
+
+      legend.append("rect")
+        .attr("x", 0)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", barColors);
+
+      legend.append("text")
+        .attr("x", 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text(d => d);
+    }
+
+    // Function to load and process temperature data
+    function loadAndProcessTemperatureData(callback) {
+      d3.csv("combined_all_states.csv").then(function (data) {
+        data.forEach(d => {
+          d.date = d3.timeParse("%d/%m/%Y")(d.date);
+          d.state = d.State;
+          d.temperature = +d['mean temperature (degC)'];
+          if (d.date === null) {
+            //console.error("Date parsing error for row:", d);
+          }
+        });
+
+        let validData = data.filter(d => d.date !== null);
+
+        let groupedData = d3.group(validData, d => {
+          let weekEnd = d3.timeFriday(d.date);
+          let weekStart = d3.timeSaturday(d3.timeWeek.offset(weekEnd, -1));
+          return weekStart.toString() + "-" + weekEnd.toString() + "-" + d.state;
+        });
+
+        let weeklyTemperature = Array.from(groupedData, ([key, values]) => ({
+          key: key,
+          value: d3.mean(values, d => d.temperature)
+        }));
+
+        callback(weeklyTemperature);
+      }).catch(function (error) {
+        // console.error("Error loading temperature data: ", error);
+      });
+    }
+
+
+    // Function to load and process flu data
+    function loadAndProcessFluData(callback) {
+      d3.csv("combined_flu_data.csv").then(function (data) {
+        data.forEach(d => {
+          d.date = d3.timeParse("%d/%m/%Y")(d.Date);
+          d.state = d.State;
+          if (d.date === null) {
+            // console.error("Date parsing error for row:", d);
+          }
+        });
+
+        let validData = data.filter(d => d.date !== null);
+
+        let groupedData = d3.group(validData, d => d.date.toString() + "-" + d.state);
+
+        let weeklyFluCases = Array.from(groupedData, ([key, values]) => ({
+          key: key,
+          value: values.length,
+          state: values[0].state
+        }));
+
+        callback(weeklyFluCases);
+      }).catch(function (error) {
+        // console.error("Error loading flu data: ", error);
+      });
+    }
+
+    // Function to merge temperature and flu data
+    function mergeTemperatureAndFluData(temperatureData, fluData) {
+      let mergedData = fluData.map(flu => {
+        let weekEnd = new Date(flu.key.split('-')[0]);
+        let weekStart = d3.timeSaturday(d3.timeWeek.offset(weekEnd, -1));
+        let state = flu.state;
+        let weekKey = weekStart.toString() + "-" + weekEnd.toString() + "-" + state;
+
+        let temperature = temperatureData.find(temp => temp.key === weekKey);
+        return {
+          date: weekEnd,
+          temperature: temperature ? temperature.value : null,
+          cases: flu.value,
+          state: flu.state
+        };
+      });
+
+      return mergedData;
+    }
+
+    // Function to load, process, and merge data
+    function loadDataAndMerge(callback) {
+      loadAndProcessTemperatureData(function (temperatureData) {
+        loadAndProcessFluData(function (fluData) {
+          let mergedData = mergeTemperatureAndFluData(temperatureData, fluData);
+          callback(mergedData);
+        });
+      });
+    }
+
+    function updateBubbleChart() {
+      const selectedYear = document.getElementById('yearSlider3').value;
+      const selectedStates = Array.from(document.querySelectorAll('#slide4 .state-checkbox:checked')).map(cb => cb.value);
+
+      loadDataAndMerge(function (mergedData) {
+        let filteredData = mergedData.filter(d => d.date.getFullYear() == selectedYear);
+
+        if (selectedStates.includes("ALL")) {
+          drawBubbleChart(filteredData);
+        } else {
+          if (selectedStates.length > 0) {
+            filteredData = filteredData.filter(d => selectedStates.includes(d.state));
+          }
+          drawBubbleChart(filteredData);
+        }
+      });
+    }
+
+
+    // Function to draw the bubble chart
+    function drawBubbleChart(data) {
+      // console.log("Drawing bubble chart with data:", data);
+      const container = document.getElementById('bubble-chart');
+      container.innerHTML = '';
+      const width = container.clientWidth || 800;
+      const height = container.clientHeight || 500;
+      const svg = d3.select("#bubble-chart").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const margin = { top: 80, right: 30, bottom: 40, left: 80 },
+        chartWidth = width - margin.left - margin.right,
+        chartHeight = height - margin.top - margin.bottom;
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const x = d3.scaleLinear()
+        .domain([0, 40])
+        .range([0, chartWidth]);
+
+      const y = d3.scaleTime()
+        .domain([d3.min(data, d => d.date), d3.max(data, d => d.date)])
+        .range([chartHeight, 0]);
+
+      const r = d3.scaleSqrt()
+        .domain([0, d3.max(data, d => d.cases)])
+        .range([0, 40]);
+
+      chart.selectAll("circle")
+        .data(data)
+        .enter().append("circle")
+        .attr("cx", d => x(d.temperature.toFixed(2)))
+        .attr("cy", d => y(d.date))
+        .attr("r", d => r(d.cases))
+        .attr("fill", d => colorScale(d.temperature))
+        .attr("opacity", 0.7)
+        .on("mouseover", function (event, d) {
+          d3.select(this).attr("stroke", "black");
+          const tooltip = d3.select("#bubbleChartTooltip");
+          tooltip.transition().duration(200).style("opacity", .9);
+
+          const selectedStates = Array.from(document.querySelectorAll('#slide4 .state-checkbox:checked')).map(cb => cb.value);
+          const stateText = selectedStates.includes("ALL") ? "All States" : d.state;
+
+          tooltip.html(`Date: ${d3.timeFormat("%B %d, %Y")(d.date)}<br>Temperature: ${d.temperature.toFixed(2)}°C<br>State: ${stateText}<br>Cases: ${d.cases}`)
+            .style("left", (event.pageX + 5) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function (d) {
+          d3.select(this).attr("stroke", "none");
+          const tooltip = d3.select("#bubbleChartTooltip");
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(x));
+
+      chart.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y).tickFormat(d3.timeFormat("%b")));
+
+      chart.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", chartWidth)
+        .attr("y", chartHeight + margin.top + 10)
+        .text("Temperature (°C)");
+
+      chart.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -margin.left + 20)
+        .attr("x", -margin.top)
+        .text("Date");
+
+      const legendWidth = 400;
+      const legendHeight = 20;
+      const legendSvg = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(${width - legendWidth - 100}, 40)`);
+
+      legendSvg.append("text")
+        .attr("x", legendWidth / 2)
+        .attr("y", -10)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .text("Average Temperature (°C)");
+
+      const legend = legendSvg.append("defs")
+        .append("svg:linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%")
+        .attr("spreadMethod", "pad");
+
+      legend.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", d3.interpolateTurbo(0))
+        .attr("stop-opacity", 1);
+
+      legend.append("stop")
+        .attr("offset", "25%")
+        .attr("stop-color", d3.interpolateTurbo(0.25))
+        .attr("stop-opacity", 1);
+
+      legend.append("stop")
+        .attr("offset", "50%")
+        .attr("stop-color", d3.interpolateTurbo(0.5))
+        .attr("stop-opacity", 1);
+
+      legend.append("stop")
+        .attr("offset", "75%")
+        .attr("stop-color", d3.interpolateTurbo(0.75))
+        .attr("stop-opacity", 1);
+
+      legend.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", d3.interpolateTurbo(1))
+        .attr("stop-opacity", 1);
+
+      legendSvg.append("rect")
+        .attr("width", legendWidth)
+        .attr("height", legendHeight)
+        .style("fill", "url(#gradient)")
+        .attr("stroke", "#000");
+
+      const xScale = d3.scaleLinear()
+        .domain([0, 40])
+        .range([0, legendWidth]);
+
+      const xAxis = d3.axisBottom(xScale)
+        .ticks(5);
+
+      legendSvg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0, ${legendHeight})`)
+        .call(xAxis);
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      setupBubbleChartSliders();
+      updateBubbleChart();
+    });
+
+
+    function setupBubbleChartSliders() {
+      const yearSlider3 = document.getElementById('yearSlider3');
+      const yearValue3 = document.getElementById('yearValue3');
+
+      yearSlider3.addEventListener('input', function () {
+        yearValue3.textContent = yearSlider3.value;
+        updateBubbleChart();
+      });
+
+      const allStatesCheckbox = document.querySelector('#slide4 .state-checkbox[value="ALL"]');
+
+      document.querySelectorAll('#slide4 .state-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          if (this.value === 'ALL' && this.checked) {
+            document.querySelectorAll('#slide4 .state-checkbox').forEach(cb => {
+              if (cb.value !== 'ALL') cb.checked = false;
+            });
+          } else {
+            if (this.checked) {
+              allStatesCheckbox.checked = false;
+            } else {
+              const anyChecked = Array.from(document.querySelectorAll('#slide4 .state-checkbox'))
+                .some(cb => cb.checked && cb.value !== 'ALL');
+              if (!anyChecked) {
+                allStatesCheckbox.checked = true;
+              }
+            }
+          }
+          updateBubbleChart();
+        });
+      });
+
+      allStatesCheckbox.checked = true;
+      updateBubbleChart();
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      setupSliders();
+      document.getElementById('yearSlider1').value = 2022;
+      document.getElementById('yearValue1').textContent = 2022;
+      document.getElementById('fullYearCheckbox').checked = true;
+      document.getElementById('monthSlider').disabled = true;
+      document.getElementById('monthValue').style.color = 'gray';
+      updateStackedBarChart();
+    });
+
+    document.querySelectorAll('.state-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', function () {
+        if (this.value === 'ALL' && this.checked) {
+          document.querySelectorAll('.state-checkbox').forEach(cb => {
+            if (cb.value !== 'ALL') cb.checked = false;
+          });
+        } else {
+          document.querySelector('.state-checkbox[value="ALL"]').checked = false;
+        }
+        updateStackedBarChart();
+      });
+    });
+  </script>
+</body>
+
+</html>

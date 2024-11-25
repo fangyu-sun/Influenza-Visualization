@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slideshow Presentation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide p {
+      margin: 0;
+      padding: 10px 0;
+    }
+
+    .navigation {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .navigation button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+    }
+
+    .homepage-buttons {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .homepage-buttons button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+    }
+
+    .back-button {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-button button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    .map-container {
+      width: 100%;
+      height: 50%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .line-chart-container {
+      width: 100%;
+      height: 50%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .legend {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .map-slider-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+      margin-bottom: 20px;
+      position: absolute;
+      left: 20px;
+      top: 150px;
+
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+      margin-bottom: 20px;
+      position: absolute;
+      left: 5px;
+      top: 180px;
+
+    }
+
+    .slider-container label {
+      margin-bottom: 5px;
+    }
+
+    .slider-container input {
+      width: 200px;
+      margin-bottom: 10px;
+    }
+
+    .slider-value {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-container p {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-container label {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-container {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 10px;
+    }
+
+    .chart-and-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      height: calc(100vh - 160px);
+    }
+
+    .controls-container {
+      display: flex;
+      flex-direction: column;
+      margin-right: 20px;
+      padding: 10px;
+      border-right: 1px solid #ccc;
+    }
+
+    .chart-container {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bubble-chart {
+      width: 100%;
+      height: 500px;
+    }
+
+    .tooltip {
+      position: absolute;
+      text-align: center;
+      width: auto;
+      height: auto;
+      padding: 30px;
+      font: 20px sans-serif;
+      background: lightsteelblue;
+      border: 0px;
+      border-radius: 8px;
+      pointer-events: none;
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide active" id="slide1">
+    <h1>Title</h1>
+    <p>Introduction</p>
+    <div class="homepage-buttons">
+      <button onclick="goToSlide(2)">Go to MAP</button>
+      <button onclick="goToSlide(3)">Go to VIS 1</button>
+      <button onclick="goToSlide(4)">Go to VIS 2</button>
+      <button onclick="goToSlide(5)">Go to Conclusion</button>
+    </div>
+  </div>
+  <div class="slide" id="slide2">
+    <h2>MAP and Line Chart</h2>
+    <div class="map-container" id="map"></div>
+    <div class="map-slider-container">
+      <label for="yearSlider2">Select Year (2008-2022):</label>
+      <input type="range" id="yearSlider2" min="2008" max="2022" value="2022" step="1">
+      <div class="slider-value" id="yearValue2">2022</div>
+      <label for="dateSlider">Select Date (Jan-1 to Dec-31):</label>
+      <input type="range" id="dateSlider" min="0" max="365" value="0" step="1">
+      <div class="slider-value" id="dateValue">Jan-1</div>
+    </div>
+    <div class="line-chart-container" id="line-chart"></div>
+    <div class="back-button">
+      <button onclick="goToSlide(1)">Back to Title</button>
+    </div>
+    <p>Describe and interpret the MAP and the Line Chart</p>
+  </div>
+  <div class="slide" id="slide3">
+    <h2>Stacked Bar Chart</h2>
+    <div class="chart-and-controls">
+      <div class="controls-container">
+        <div class="slider-container">
+          <label for="yearSlider1">Select Year (2008-2022):</label>
+          <input type="range" id="yearSlider1" min="2008" max="2022" value="2022" step="1">
+          <div class="slider-value" id="yearValue1">2022</div>
+        </div>
+        <div class="slider-container" style="margin-top: 100px;">
+          <label for="monthSlider">Select Month:</label>
+          <input type="range" id="monthSlider" min="1" max="12" value="1" step="1" style="margin-left: 2px;">
+          <div style="display: flex; align-items: center; margin-top: 10px;">
+            <input type="checkbox" id="fullYearCheckbox" style="margin-left: -85px;">
+            <label for="fullYearCheckbox" style="margin-left: 5px;">Full Year</label>
+          </div>
+          <div class="slider-value" id="monthValue">January</div>
+        </div>
+        <div class="checkbox-container" style="margin-top: 400px;">
+          <p>Select State:</p>
+          <label><input type="checkbox" class="state-checkbox" value="ALL" checked> All States</label>
+          <label><input type="checkbox" class="state-checkbox" value="NSW"> NSW</label>
+          <label><input type="checkbox" class="state-checkbox" value="VIC"> VIC</label>
+          <label><input type="checkbox" class="state-checkbox" value="QLD"> QLD</label>
+          <label><input type="checkbox" class="state-checkbox" value="SA"> SA</label>
+          <label><input type="checkbox" class="state-checkbox" value="WA"> WA</label>
+          <label><input type="checkbox" class="state-checkbox" value="TAS"> TAS</label>
+          <label><input type="checkbox" class="state-checkbox" value="NT"> NT</label>
+          <label><input type="checkbox" class="state-checkbox" value="ACT"> ACT</label>
+        </div>
+      </div>
+      <div class="chart-container" id="stacked-bar-chart"></div>
+    </div>
+    <p>Describe and interpret the Stacked Bar Chart</p>
+    <div class="back-button">
+      <button onclick="goToSlide(1)">Back to Title</button>
+    </div>
+  </div>
+  <div class="slide" id="slide4">
+    <h2>VIS 2: 温度变化和流感病例数量的关系</h2>
+    <div class="chart-and-controls">
+      <!-- 控制面板 -->
+      <div class="controls-container">
+        <!-- 年份滑块 -->
+        <div class="slider-container">
+          <label for="yearSlider3">Select Year:</label>
+          <input type="range" id="yearSlider3" min="2008" max="2022" value="2022" step="1">
+          <div class="slider-value" id="yearValue3">2022</div>
+        </div>
+        <div class="checkbox-container" style="margin-top: 200px;">
+          <p>Select State:</p>
+          <label><input type="checkbox" class="state-checkbox" value="ALL" checked> All States</label>
+          <label><input type="checkbox" class="state-checkbox" value="NSW" checked> NSW</label>
+          <label><input type="checkbox" class="state-checkbox" value="VIC" checked> VIC</label>
+          <label><input type="checkbox" class="state-checkbox" value="QLD" checked> QLD</label>
+          <label><input type="checkbox" class="state-checkbox" value="SA" checked> SA</label>
+          <label><input type="checkbox" class="state-checkbox" value="WA" checked> WA</label>
+          <label><input type="checkbox" class="state-checkbox" value="TAS" checked> TAS</label>
+          <label><input type="checkbox" class="state-checkbox" value="NT" checked> NT</label>
+          <label><input type="checkbox" class="state-checkbox" value="ACT" checked> ACT</label>
+        </div>
+      </div>
+      <!-- 气泡图容器 -->
+      <div class="chart-container" id="bubble-chart"></div>
+    </div>
+    <p>描述和解释气泡图</p>
+    <div class="back-button">
+      <button onclick="goToSlide(1)">返回标题</button>
+    </div>
+  </div>
+
+  <div class="slide" id="slide5">
+    <h2>Conclusion</h2>
+    <p>End of the presentation. Data source.</p>
+  </div>
+  <div class="navigation">
+    <button onclick="prevSlide()">Previous</button>
+    <button onclick="nextSlide()">Next</button>
+  </div>
+
+  <div class="tooltip" id="lineChartTooltip"></div>
+  <div class="tooltip" id="stackedBarChartTooltip"></div>
+
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 5;
+    const states = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"];
+    const stateNameMapping = {
+      "New South Wales": "NSW",
+      "Victoria": "VIC",
+      "Queensland": "QLD",
+      "South Australia": "SA",
+      "Western Australia": "WA",
+      "Tasmania": "TAS",
+      "Northern Territory": "NT",
+      "Australian Capital Territory": "ACT"
+    };
+    let virusTypes = [];
+    const lineColors = d3.scaleOrdinal(d3.schemeCategory10);
+    const barColors = d3.scaleOrdinal(d3.schemeCategory10);
+
+    function showSlide(n) {
+      document.querySelectorAll('.slide').forEach(slide => {
+        slide.classList.remove('active');
+      });
+      document.getElementById(`slide${n}`).classList.add('active');
+      if (n === 2) {
+        loadCSVDataAndDrawVisualizations();
+        setupSliders();
+      }
+      if (n === 3) {
+        document.getElementById('yearSlider1').value = 2022;
+        document.getElementById('yearValue1').textContent = 2022;
+        document.getElementById('fullYearCheckbox').checked = true;
+        document.getElementById('monthSlider').disabled = true;
+        document.getElementById('monthValue').style.color = 'gray';
+        updateStackedBarChart();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function goToSlide(n) {
+      currentSlide = n;
+      showSlide(n);
+    }
+
+    // Function to load temp CSV data and draw visualizations
+    function loadCSVDataAndDrawVisualizations() {
+      d3.csv("combined_all_states.csv").then(function (data) {
+        const parsedData = parseData(data);
+        updateVisualizations(parsedData);
+      }).catch(function (error) {
+        //console.error("Error loading CSV data: ", error);
+      });
+    }
+
+    // Function to parse CSV data
+    function parseData(data) {
+      return data.map(d => {
+        const [day, month, year] = d.date.split('/');
+        const parsedDate = new Date(year, month - 1, day);
+        return {
+          state: d.State,
+          date: parsedDate,
+          temperature: +d['mean temperature (degC)']
+        };
+      });
+    }
+
+    // Function to update visualizations
+    function updateVisualizations(data) {
+      drawMap(data);
+      const year = document.getElementById('yearSlider2').value;
+      drawLineChart(data, +year);  // Update line chart with selected year
+    }
+
+    // Function to draw the map on slide 2
+    function drawMap(data) {
+      const width = document.getElementById('map').clientWidth;
+      const height = document.getElementById('map').clientHeight;
+
+      // Clear existing map, but keep slider-container
+      d3.select("#map").selectAll("svg").remove();
+
+      const svg = d3.select("#map").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const projection = d3.geoMercator()
+        .center([133.7751, -25.2744])
+        .scale(700)
+        .translate([width / 2, height / 2]);
+
+      const path = d3.geoPath().projection(projection);
+
+      const color = d3.scaleSequential([0, 40], d3.interpolateTurbo);
+
+      // Create tooltip
+      const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip");
+
+      d3.json("https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.geojson").then(function (mapData) {
+        // Select elements and check
+        const paths = svg.selectAll("path")
+          .data(mapData.features)
+          .enter().append("path")
+          .attr("d", path)
+          .attr("fill", "#ccc")
+          .attr("stroke", "#000");
+
+        paths.attr("fill", function (d) {
+          const year = d3.select("#yearSlider2").property("value");
+          const dateSliderValue = d3.select("#dateSlider").property("value");
+          const selectedDate = new Date(year, 0, 1);
+          selectedDate.setDate(selectedDate.getDate() + parseInt(dateSliderValue));
+
+          const day = selectedDate.getDate();
+          const month = selectedDate.getMonth() + 1;
+          const formattedDate = `${day}/${month}/${year}`;
+          const stateAbbreviation = stateNameMapping[d.properties.STATE_NAME];
+          const stateData = data.find(item => item.state === stateAbbreviation && item.date.getTime() === selectedDate.getTime());
+          if (stateData) {
+            const colorValue = color(stateData.temperature);
+            return colorValue;
+          } else {
+            return "#ccc";
+          }
+        })
+          .on("mouseover", function (event, d) {
+            const stateName = d.properties.STATE_NAME;
+            const year = d3.select("#yearSlider2").property("value");
+            const dateSliderValue = d3.select("#dateSlider").property("value");
+            const selectedDate = new Date(year, 0, 1);
+            selectedDate.setDate(selectedDate.getDate() + parseInt(dateSliderValue));
+            const dateFormatted = d3.timeFormat("%B %d, %Y")(selectedDate);
+            const stateAbbreviation = stateNameMapping[stateName];
+            const stateData = data.find(item => item.state === stateAbbreviation && item.date.getTime() === selectedDate.getTime());
+            const temperature = stateData ? stateData.temperature : "N/A";
+            tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
+            tooltip.html(`State: ${stateName}<br>Date: ${dateFormatted}<br>Temperature: ${temperature !== "N/A" ? temperature.toFixed(2) : temperature}°C`)
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mousemove", function (event) {
+            tooltip.style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function () {
+            tooltip.transition()
+              .duration(500)
+              .style("opacity", 0);
+          });
+
+        // Add legend
+        const legendWidth = 400;
+        const legendHeight = 20;
+
+        const legendSvg = svg.append("g")
+          .attr("class", "legend")
+          .attr("transform", `translate(${width - legendWidth - 40}, 40)`);
+
+        legendSvg.append("text")
+          .attr("x", legendWidth / 2)
+          .attr("y", -10)
+          .attr("text-anchor", "middle")
+          .style("font-size", "14px")
+          .style("font-weight", "bold")
+          .text("Average Temperature (°C)");
+
+        const legend = legendSvg.append("defs")
+          .append("svg:linearGradient")
+          .attr("id", "gradient")
+          .attr("x1", "0%")
+          .attr("y1", "0%")
+          .attr("x2", "100%")
+          .attr("y2", "0%")
+          .attr("spreadMethod", "pad");
+
+        legend.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", d3.interpolateTurbo(0))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "25%")
+          .attr("stop-color", d3.interpolateTurbo(0.25))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", d3.interpolateTurbo(0.5))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "75%")
+          .attr("stop-color", d3.interpolateTurbo(0.75))
+          .attr("stop-opacity", 1);
+
+        legend.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", d3.interpolateTurbo(1))
+          .attr("stop-opacity", 1);
+
+        legendSvg.append("rect")
+          .attr("width", legendWidth)
+          .attr("height", legendHeight)
+          .style("fill", "url(#gradient)")
+          .attr("stroke", "#000");
+
+        const xScale = d3.scaleLinear()
+          .domain([0, 40])
+          .range([0, legendWidth]);
+
+        const xAxis = d3.axisBottom(xScale)
+          .ticks(5);
+
+        legendSvg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", `translate(0, ${legendHeight})`)
+          .call(xAxis);
+      }).catch(function (error) {
+        //console.error(error);
+      });
+    }
+
+    function drawLineChart(data, year) {
+      const container = document.getElementById('line-chart');
+      container.innerHTML = '';  // Clear existing chart
+      const width = container.clientWidth * 0.55;  // Reduce width by 45%
+      const height = container.clientHeight * 0.55;  // Reduce height by 45%
+
+      const svg = d3.select("#line-chart").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const margin = { top: 20, right: 300, bottom: 30, left: 40 },
+        chartWidth = width - margin.left - margin.right,
+        chartHeight = height - margin.top - margin.bottom;
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const x = d3.scaleTime()
+        .domain([new Date(year, 0, 1), new Date(year, 11, 31)])
+        .range([0, chartWidth]);
+
+      const y = d3.scaleLinear()
+        .domain([0, 40])
+        .range([chartHeight, 0]);
+
+      const line = d3.line()
+        .x(d => x(d.week))
+        .y(d => y(d.temperature));
+
+      // Filter data for the selected year
+      const filteredData = data.filter(d => d.date.getFullYear() === year);
+
+      // Calculate weekly average temperatures
+      const weeklyData = d3.groups(filteredData, d => d.state).map(([state, values]) => {
+        const weeks = d3.timeWeeks(new Date(year, 0, 1), new Date(year, 11, 31));
+        const weeklyAverages = weeks.map(weekStart => {
+          const weekEnd = d3.timeDay.offset(weekStart, 6);
+          const weekValues = values.filter(d => d.date >= weekStart && d.date <= weekEnd);
+          const avgTemp = d3.mean(weekValues, d => d.temperature);
+          return { week: weekStart, temperature: avgTemp, state };
+        }).filter(d => !isNaN(d.temperature)); // Remove weeks without data
+        return { state, values: weeklyAverages };
+      });
+
+      // Create tooltip
+      const tooltip = d3.select("#lineChartTooltip");
+
+      // Draw lines for each state
+      const stateLines = chart.selectAll(".state-line")
+        .data(weeklyData)
+        .enter().append("g")
+        .attr("class", "state-line");
+
+      stateLines.append("path")
+        .attr("class", "line")
+        .attr("d", d => line(d.values))
+        .attr("fill", "none")
+        .attr("stroke", d => lineColors(d.state))
+        .attr("stroke-width", 2);
+
+      stateLines.append("text")
+        .datum(d => ({
+          state: d.state,
+          value: d.values[d.values.length - 1]
+        }))
+        .attr("transform", d => `translate(${x(d.value.week)},${y(d.value.temperature)})`)
+        .attr("x", 5)
+        .attr("dy", ".35em")
+        .style("font", "10px sans-serif")
+        .text(d => d.state);
+
+      // Add circles to data points for hover events
+      const circles = stateLines.selectAll("circle")
+        .data(d => d.values)
+        .enter().append("circle")
+        .attr("cx", d => x(d.week))
+        .attr("cy", d => y(d.temperature))
+        .attr("r", 4)
+        .attr("fill", d => lineColors(d.state))
+        .on("mouseover", function (event, d) {
+          svg.selectAll(".line")
+            .style("opacity", 0.1);
+          svg.selectAll("circle")
+            .style("opacity", 0);
+          d3.select(this)
+            .style("opacity", 1);
+          svg.selectAll(".line")
+            .filter(line => line.state === d.state)
+            .style("opacity", 1)
+            .attr("stroke-width", 4);
+          tooltip.transition().duration(200).style("opacity", .9);
+          tooltip.html(`State: ${d.state}<br>Date: ${d3.timeFormat("%B %d, %Y")(d.week)}<br>Temperature: ${d.temperature.toFixed(2)}°C`)
+            .style("left", (event.pageX + 5) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function () {
+          tooltip.transition().duration(500).style("opacity", 0);
+          svg.selectAll(".line")
+            .style("opacity", 1)
+            .attr("stroke-width", 2);
+          svg.selectAll("circle")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          tooltip.style("left", (event.pageX + 5) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        });
+
+      // Draw x and y axis
+      chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(x).ticks(d3.timeMonth).tickFormat(d3.timeFormat("%b")));
+
+      chart.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+      // Draw legend
+      const legend = svg.selectAll(".legend")
+        .data(states)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => `translate(${chartWidth + 100},${i * 20})`)
+        .on("mouseover", function (event, d) {
+          highlightLine(d);
+        })
+        .on("mouseout", function () {
+          resetLines();
+        });
+
+      legend.append("rect")
+        .attr("x", 0)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", lineColors);
+
+      legend.append("text")
+        .attr("x", 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text(d => d);
+
+      // Highlight a specific line
+      function highlightLine(state) {
+        svg.selectAll(".line")
+          .style("opacity", 0.1);
+        svg.selectAll(".line")
+          .filter(d => d.state === state)
+          .style("opacity", 1)
+          .attr("stroke-width", 4);
+        svg.selectAll("circle")
+          .style("opacity", 0);  // Hide all data points
+      }
+
+      // Reset lines to normal
+      function resetLines() {
+        svg.selectAll(".line")
+          .style("opacity", 1)
+          .attr("stroke-width", 2);
+        svg.selectAll("circle")
+          .style("opacity", 1);
+      }
+    }
+
+    // Function to set up sliders
+    function setupSliders() {
+      const yearSlider1 = document.getElementById('yearSlider1');
+      const yearValue1 = document.getElementById('yearValue1');
+      const yearSlider2 = document.getElementById('yearSlider2');
+      const yearValue2 = document.getElementById('yearValue2');
+      const dateSlider = document.getElementById('dateSlider');
+      const dateValue = document.getElementById('dateValue');
+      const monthSlider = document.getElementById('monthSlider');
+      const monthValue = document.getElementById('monthValue');
+      const fullYearCheckbox = document.getElementById('fullYearCheckbox');
+
+      function updateYearSlider(value) {
+        yearSlider1.value = value;
+        yearSlider2.value = value;
+        yearValue1.textContent = value;
+        yearValue2.textContent = value;
+        updateStackedBarChart();
+        loadCSVDataAndDrawVisualizations();
+      }
+
+      yearSlider1.addEventListener('input', function () {
+        updateYearSlider(yearSlider1.value);
+      });
+
+      yearSlider2.addEventListener('input', function () {
+        updateYearSlider(yearSlider2.value);
+      });
+
+      dateSlider.addEventListener('input', function () {
+        const year = yearSlider2.value;
+        const date = new Date(year, 0, 1);
+        date.setDate(date.getDate() + parseInt(dateSlider.value));
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const formattedDate = `${day}/${month}/${year}`;
+        dateValue.textContent = formattedDate;
+        loadCSVDataAndDrawVisualizations();  // Update visualizations with selected date
+      });
+
+      monthSlider.addEventListener('input', function () {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        monthValue.textContent = monthNames[monthSlider.value - 1];
+        updateStackedBarChart();
+      });
+
+      fullYearCheckbox.addEventListener('change', function () {
+        const isFullYear = fullYearCheckbox.checked;
+        monthSlider.disabled = isFullYear;
+        monthValue.style.color = isFullYear ? 'gray' : 'black';
+        updateStackedBarChart();
+      });
+    }
+
+    function loadAndProcessData(callback) {
+      d3.csv("combined_flu_data.csv").then(function (data) {
+        const processedData = data.map(d => {
+          const [day, month, year] = d.Date.split('/');
+          const parsedDate = new Date(year, month - 1, day);
+          return {
+            date: parsedDate,
+            state: d.State,
+            ageGroup: d['Age group'],
+            sex: d.Sex,
+            type: d['Type/Subtype'],  // 确保解析 Type/Subtype 字段
+            cases: +d['cases']
+          };
+        });
+
+        // 获取所有病毒类型
+        virusTypes = Array.from(new Set(processedData.map(d => d.type)));
+        barColors.domain(virusTypes); // 设置颜色域
+        callback(processedData, virusTypes);
+      }).catch(function (error) {
+        // console.error("Error loading CSV data: ", error);
+      });
+    }
+
+    function updateStackedBarChart() {
+      const year = document.getElementById('yearSlider1').value;
+      const fullYear = document.getElementById('fullYearCheckbox').checked;
+      const selectedStates = Array.from(document.querySelectorAll('.state-checkbox:checked')).map(cb => cb.value);
+
+      loadAndProcessData(function (data) {
+        let filteredData;
+        if (fullYear) {
+          filteredData = data.filter(d => {
+            return d.date.getFullYear() == year;
+          });
+        } else {
+          const month = document.getElementById('monthSlider').value;
+          filteredData = data.filter(d => {
+            return d.date.getFullYear() == year && (d.date.getMonth() + 1) == month;
+          });
+        }
+
+        if (selectedStates.length > 0 && !selectedStates.includes('ALL')) {
+          filteredData = filteredData.filter(d => selectedStates.includes(d.state));
+        }
+
+        drawStackedBarChart(filteredData, virusTypes);
+      });
+    }
+
+    // Function to draw the stacked bar chart on slide 3
+    function drawStackedBarChart(data, virusTypes) {
+      const container = document.getElementById('stacked-bar-chart');
+      container.innerHTML = '';  // 清空现有图表
+      const width = container.clientWidth * 0.8;  // 调整宽度
+      const height = container.clientHeight * 0.8;  // 调整高度
+
+      const svg = d3.select("#stacked-bar-chart").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const margin = { top: 20, right: 30, bottom: 40, left: 40 },
+        chartWidth = width - margin.left - margin.right,
+        chartHeight = height - margin.top - margin.bottom;
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const ageGroups = [
+        "00~04", "05~09", "10~14", "15~19", "20~24", "25~29", "30~34", "35~39",
+        "40~44", "45~49", "50~54", "55~59", "60~64", "65~69", "70~74", "75~79",
+        "80~84", "85+", "Unknown"
+      ];
+
+      const nestedData = d3.groups(data, d => d.ageGroup).map(([key, values]) => {
+        const countByType = d3.rollups(values, v => v.length, d => d.type);
+        const result = { ageGroup: key, state: values[0].state, date: values[0].date }; // 添加 state 和 date
+        countByType.forEach(([type, count]) => {
+          result[type] = count;
+        });
+        return result;
+      }).filter(d => ageGroups.includes(d.ageGroup));
+
+      nestedData.sort((a, b) => ageGroups.indexOf(a.ageGroup) - ageGroups.indexOf(b.ageGroup));
+
+      const stack = d3.stack()
+        .keys(virusTypes);
+
+      const layers = stack(nestedData);
+
+      const x = d3.scaleBand()
+        .domain(ageGroups)
+        .range([0, chartWidth])
+        .padding(0.1);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(layers, layer => d3.max(layer, d => d[1]))])
+        .range([chartHeight, 0]);
+
+      const layerGroups = chart.selectAll(".layer")
+        .data(layers)
+        .enter().append("g")
+        .attr("class", "layer")
+        .attr("fill", d => barColors(d.key));
+
+      const bars = layerGroups.selectAll("rect")
+        .data(d => d)
+        .enter().append("rect")
+        .attr("x", d => x(d.data.ageGroup))
+        .attr("y", d => isNaN(y(d[1])) ? 0 : y(d[1]))  // 确保 y 不是 NaN
+        .attr("height", d => {
+          const height = y(d[0]) - y(d[1]);
+          return isNaN(height) ? 0 : Math.max(0, height);  // 确保高度没有 NaN 或负值
+        })
+        .attr("width", x.bandwidth())
+        .on("mouseover", function (event, d) {
+          d3.selectAll(".layer rect").style("opacity", 0.3);
+          d3.select(this)
+            .style("opacity", 1)
+            .style("stroke", "black")
+            .style("stroke-width", "2px");
+
+          const virusType = d3.select(this.parentNode).datum().key;
+
+          const tooltip = d3.select("#stackedBarChartTooltip")
+            .style("opacity", 1)
+            .html(`State: ${d.data.state}<br>Period: ${d.data.date.getFullYear()}-${d.data.date.getMonth() + 1}<br>Virus Type: ${virusType}<br>Cases Number: ${d[1] - d[0]}`)
+            .style("left", `${event.pageX + 5}px`)
+            .style("top", `${event.pageY - 28}px`);
+        })
+        .on("mouseout", function (d) {
+          d3.selectAll(".layer rect").style("opacity", 1);
+          d3.select(this)
+            .style("stroke", "none");
+
+          d3.select("#stackedBarChartTooltip")
+            .style("opacity", 0);
+        });
+
+      // 添加文本元素显示总数量
+      nestedData.forEach(d => {
+        const totalCases = d3.sum(Object.values(d).slice(1));
+        chart.append("text")
+          .attr("x", x(d.ageGroup) + x.bandwidth() / 2)
+          .attr("y", y(totalCases) - 5)
+          .attr("text-anchor", "middle")
+          .attr("font-size", "14px")
+          .attr("fill", "black")
+          .text(totalCases);
+      });
+
+      chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("font-size", "14px");
+
+      chart.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+      // 添加图例
+      const legend = svg.selectAll(".legend")
+        .data(virusTypes)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => `translate(0,${i * 20})`);
+
+      legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", barColors);
+
+      legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(d => d);
+    }
+
+
+
+    // Function to draw the bubble chart
+    function drawBubbleChart(data) {
+      console.log("Drawing bubble chart with data:", data); // 输出绘制时的数据
+
+      const container = document.getElementById('bubble-chart');
+      container.innerHTML = '';  // 清空现有图表
+
+      // 确保容器具有宽度和高度
+      const width = container.clientWidth || 800; // 设置默认值，确保宽度不为0
+      const height = container.clientHeight || 500;  // 确保高度不为0
+
+      const svg = d3.select("#bubble-chart").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const margin = { top: 20, right: 30, bottom: 40, left: 50 },
+        chartWidth = width - margin.left - margin.right,
+        chartHeight = height - margin.top - margin.bottom;
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const x = d3.scaleLinear()
+        .domain([0, 40])  // 温度范围
+        .range([0, chartWidth]);
+
+      const y = d3.scaleTime()
+        .domain([new Date(0, 0, 1), new Date(0, 11, 31)])  // 时间范围
+        .range([chartHeight, 0]);  // 注意：Y轴范围应该从高到低
+
+      const r = d3.scaleSqrt()
+        .domain([0, d3.max(data, d => d.cases)])  // 病例数范围
+        .range([0, 40]);  // 气泡大小范围
+
+      // 确保data中有有效的数据点
+      if (data.length === 0) {
+        console.log("No data to display");
+        return;
+      }
+
+      chart.selectAll("circle")
+        .data(data)
+        .enter().append("circle")
+        .attr("cx", d => x(d.temperature))
+        .attr("cy", d => y(d.date))
+        .attr("r", d => r(d.cases))
+        .attr("fill", "steelblue")
+        .attr("opacity", 0.7)
+        .on("mouseover", function (event, d) {
+          d3.select(this).attr("stroke", "black");
+          const tooltip = d3.select("#bubbleChartTooltip");
+          tooltip.transition().duration(200).style("opacity", .9);
+          tooltip.html(`State: ${d.state}<br>Date: ${d3.timeFormat("%B %d")(d.date)}<br>Temperature: ${d.temperature}°C<br>Cases: ${d.cases}`)
+            .style("left", (event.pageX + 5) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function (d) {
+          d3.select(this).attr("stroke", "none");
+          const tooltip = d3.select("#bubbleChartTooltip");
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      // 添加 x 轴
+      chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(x));
+
+      // 添加 y 轴
+      chart.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y).tickFormat(d3.timeFormat("%b")));
+
+      // 添加 x 轴标签
+      chart.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", chartWidth)
+        .attr("y", chartHeight + margin.top + 10)
+        .text("Temperature (°C)");
+
+      // 添加 y 轴标签
+      chart.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -margin.left + 20)
+        .attr("x", -margin.top)
+        .text("Date");
+    }
+
+
+    // Function to set up sliders and checkboxes for the bubble chart
+    function setupBubbleChartSliders() {
+      const yearSlider3 = document.getElementById('yearSlider3');
+      const yearValue3 = document.getElementById('yearValue3');
+
+      yearSlider3.addEventListener('input', function () {
+        yearValue3.textContent = yearSlider3.value;
+        updateBubbleChart();
+      });
+
+      document.querySelectorAll('.state-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          updateBubbleChart();
+        });
+      });
+    }
+
+    // Function to update the bubble chart based on selected year and states
+    function updateBubbleChart() {
+      const selectedYear = document.getElementById('yearSlider3').value;
+      const selectedStates = Array.from(document.querySelectorAll('.state-checkbox:checked')).map(cb => cb.value);
+
+      loadAndProcessBubbleChartData(function (data) {
+        let filteredData = data.filter(d => d.date.getFullYear() == selectedYear);
+
+        if (selectedStates.length > 0 && !selectedStates.includes('ALL')) {
+          filteredData = filteredData.filter(d => selectedStates.includes(d.state));
+        }
+        // console.log("Filtered Data:", filteredData); // 打印过滤后的数据
+        drawBubbleChart(filteredData);
+      });
+    }
+
+    function loadAndProcessBubbleChartData(callback) {
+      d3.csv("combined_flu_data.csv").then(function (data) {
+        const processedData = data.map(d => {
+          const [day, month, year] = d.Date.split('/');
+          const parsedDate = new Date(year, month - 1, day); // 确保日期解析正确
+          return {
+            date: parsedDate,
+            state: d.State,
+            temperature: +d['mean temperature (degC)'],
+            cases: +d['cases']
+          };
+        });
+        console.log("Processed Data:", processedData); // 输出加载的数据
+        callback(processedData);
+      }).catch(function (error) {
+        // console.error("Error loading CSV data: ", error);
+      });
+    }
+
+    // 在文档加载完成时初始化气泡图滑块和复选框
+    document.addEventListener('DOMContentLoaded', function () {
+      setupBubbleChartSliders();
+      updateBubbleChart();
+    });
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      setupSliders();
+      document.getElementById('yearSlider1').value = 2022;
+      document.getElementById('yearValue1').textContent = 2022;
+      document.getElementById('fullYearCheckbox').checked = true;
+      document.getElementById('monthSlider').disabled = true;
+      document.getElementById('monthValue').style.color = 'gray';
+      updateStackedBarChart();
+    });
+
+    document.querySelectorAll('.state-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', function () {
+        if (this.value === 'ALL' && this.checked) {
+          document.querySelectorAll('.state-checkbox').forEach(cb => {
+            if (cb.value !== 'ALL') cb.checked = false;
+          });
+        } else {
+          document.querySelector('.state-checkbox[value="ALL"]').checked = false;
+        }
+        updateStackedBarChart();
+      });
+    });
+  </script>
+</body>
+
+</html>

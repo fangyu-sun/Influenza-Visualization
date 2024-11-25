@@ -1,0 +1,18 @@
+"Count of persons(a) by state and territory by sex, 2021 Census"
+,"Male","Female","Total"
+"New South Wales","3,984,166","4,087,995","8,072,163"
+"Victoria","3,200,963","3,302,528","6,503,491"
+"Queensland","2,540,404","2,615,736","5,156,138"
+"South Australia","878,592","902,924","1,781,516"
+"Western Australia","1,322,855","1,337,171","2,660,026"
+"Tasmania","273,765","283,804","557,571"
+"Northern Territory","117,526","115,075","232,605"
+"Australian Capital Territory","224,361","230,140","454,499"
+"Australia(b)","12,545,154","12,877,635","25,422,788"
+
+"Note there are small random adjustments made to all cell values to protect the confidentiality of data. These adjustments may cause the sum of rows or columns to differ by small amounts from table totals."
+"a. Based on place of usual residence. Excludes overseas visitors."
+"b. Includes Other Territories."
+"Source: Sex (SEXP)"
+
+"Source: Australian Bureau of Statistics, Population: Census 2021"
